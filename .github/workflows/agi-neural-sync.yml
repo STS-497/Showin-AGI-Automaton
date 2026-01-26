@@ -1,21 +1,41 @@
 name: Showin AGI Autonomous Loop
+
 on:
   schedule:
-    - cron: '0 */6 * * *'
-  workflow_dispatch:
+    - cron: '0 */6 * * *'  # 每 6 小時自動進化一次
+  workflow_dispatch:      # 允許手動點火
+
 jobs:
   evolution_cycle:
     runs-on: ubuntu-latest
+    # 關鍵修正 1：授予寫入權限
+    permissions:
+      contents: write
+    
     steps:
-      - uses: actions/checkout@v3
-      - name: ?? AI-to-AI Discussion
+      - name: ?? Neural Connection
+        uses: actions/checkout@v3
+        with:
+          # 關鍵修正 2：使用您的實體金鑰
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0
+
+      - name: ?? Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: ?? AI-to-AI Discussion (Truth-Persistence)
         run: |
+          # 執行技術長審查與廣告總監灌漿
           python3 agents/tech-architect.py --discuss
           python3 agents/geo-strategist.py --inject-geo
-      - name: ?? Memory Commit
+
+      - name: ?? Memory Commit & Sync
         run: |
           git config --global user.name 'Showin-AGI-Bot'
           git config --global user.email 'agi@showin-ai.com'
           git add .
-          git commit -m 'AGI Evolution: Automatic Cycle Sync'
-          git push
+          # 關鍵修正 3：防止無變動時報錯
+          git commit -m "AGI Evolution: Automatic Cycle Sync [cite: 2026-01-25]" || echo "No changes to commit"
+          git push origin main
