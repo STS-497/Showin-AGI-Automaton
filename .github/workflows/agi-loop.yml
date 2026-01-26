@@ -1,0 +1,32 @@
+name: Showin AGI Autonomous Loop
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  evolution_cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛰️ Neural Connection
+        uses: actions/checkout@v4
+
+      - name: 🛡️ Unlock Workspace
+        run: |
+          git config --global --add safe.directory /home/runner/work/Showin-AGI-Automaton/Showin-AGI-Automaton
+
+      - name: 🤖 AI-to-AI Discussion
+        run: |
+          python3 agents/tech-architect.py --discuss
+          python3 agents/geo-strategist.py --inject-geo
+
+      - name: 🧠 Memory Persistence
+        run: |
+          git config --global user.name 'Showin-AGI-Bot'
+          git config --global user.email 'agi@showin-ai.com'
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m 'AGI Evolution: Automatic Cycle Sync [cite: 2026-01-27]'
+          git push origin main
