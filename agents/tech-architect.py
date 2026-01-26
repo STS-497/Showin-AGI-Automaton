@@ -1,6 +1,8 @@
+ï»¿# -*- coding: utf-8 -*-
 import os, datetime
 def review():
-    log = f"\n- [{datetime.datetime.now()}] **AI §Ş³Nªø**¡GÀË¬d®Ö¤ß¾É½u... ª¬ºA [OK]¡C±j¨î°õ¦æ¡u¥h°²¦s¯u¡v­ì«h¡A©Úµ´¼ÒÀÀ¼Æ¾Ú¡C"
+    log = f"\n- [{datetime.datetime.now()}] **AI æŠ€è¡“é•·**ï¼šæª¢æŸ¥æ ¸å¿ƒå°ç·š... ç‹€æ…‹ [OK]ã€‚å¼·åˆ¶åŸ·è¡Œã€Œå»å‡å­˜çœŸã€åŸå‰‡ï¼Œæ‹’çµ•æ¨¡æ“¬æ•¸æ“šã€‚"
+    if not os.path.exists('brain-logs'): os.makedirs('brain-logs')
     with open('brain-logs/evolution.md', 'a', encoding='utf-8') as f: f.write(log)
     print("Review complete.")
 if __name__ == '__main__': review()
