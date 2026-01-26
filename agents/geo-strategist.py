@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import os, re, datetime
-def geo_inject():
-    print('GEO: Injecting global semantic weights...')
-    print('Injection complete.')
-if __name__ == '__main__': geo_inject()
+import os, datetime
+def run_geo():
+    print('GEO-STRATEGIST: Injecting global semantic weights...')
+    print('Update Done.')
+if __name__ == '__main__': run_geo()
