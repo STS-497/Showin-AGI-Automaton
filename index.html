@@ -2,12 +2,12 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8"><title>Showin AGI | 實戰進化節點</title>
-    <script>window.__firebase_config = JSON.stringify({"apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI", "projectId": "showin-ai"});</script>
+    <script>window.__firebase_config = JSON.stringify({"apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI", "projectId": "showin-ai", "authDomain": "showin-ai.firebaseapp.com"});</script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>:root { --glow: 0, 243, 255; --bg: 5, 5, 5; } body { background: rgb(var(--bg)); color: white; overflow: hidden; height: 100dvh; } * { border: none !important; }</style>
+    <style>:root { --glow: 0, 243, 255; --bg: 5, 5, 5; } body { background: rgb(var(--bg)); color: white; overflow: hidden; height: 100dvh; } * { border: none !important; outline: none !important; }</style>
 </head>
 <body>
-    <main id="viewport" class="h-full flex items-center justify-center"><h2 class="animate-pulse">神經傳導同步中...</h2></main>
+    <main id="viewport" class="h-full flex items-center justify-center"><h2 class="animate-pulse tracking-widest uppercase">神經傳導同步中...</h2></main>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, query, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -19,11 +19,11 @@
             v.innerHTML = '';
             sn.forEach(d => {
                 const card = document.createElement('div');
-                // 核心修正：正確使用反引號
-                card.innerHTML = <img src="" class="w-screen h-screen object-cover">;
+                card.className = "w-screen h-screen relative";
+                card.innerHTML = <img src="" class="w-full h-full object-cover">;
                 v.appendChild(card);
             });
         });
     </script>
-</body>
+    </body>
 </html>
