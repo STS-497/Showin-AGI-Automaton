@@ -1,0 +1,1 @@
+# 1. 確保進入專案目錄 cd "$home\Desktop\Showin-AGI-Automaton"  # 2. 物理寫入 README.md (強制 UTF-8 無 BOM，排除編碼幽靈) $Utf8NoBom = New-Object System.Text.UTF8Encoding $False $readme_content = Get-Clipboard # 或是將剛才生成的內容貼入此處 [System.IO.File]::WriteAllText("$(Get-Location)\README.md", $readme_content, $Utf8NoBom)  # 3. 執行點火腳本進行全量同步 .\sh-ignition.bat
