@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Showin AGI | Data Core 數據核心</title>
+    <script>
+        window.__firebase_config = JSON.stringify({
+            "apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI",
+            "authDomain": "showin-ai.firebaseapp.com",
+            "projectId": "showin-ai",
+            "storageBucket": "showin-ai.firebasestorage.app",
+            "messagingSenderId": "1057607013984",
+            "appId": "1:1057607013984:web:8f2b18445aff1b1d531505"
+        });
+        window.API_BASE = "https://showin-engine-1057607013984.asia-east1.run.app";
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* 視覺 DNA 變數 - 嚴禁轉換為 Hex */
+            --primary-glow: 0, 243, 255; 
+            --accent-purple: 168, 85, 247;
+            --bg-deep: 5, 5, 5;
+            --panel-soft: 20, 20, 20;
+            --text-pure: 255, 255, 255;
+            --sh-soft-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        body {
+            background-color: rgb(var(--bg-deep));
+            color: rgb(var(--text-pure));
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 去硬邊協定：禁止 border-bottom */
+        * { border: none !important; outline: none !important; }
+
+        .data-panel {
+            background: rgba(var(--panel-soft), 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: var(--sh-soft-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .pts-glow {
+            text-shadow: 0 0 20px rgba(var(--primary-glow), 0.5);
+            background: linear-gradient(90deg, #00F6FF, #A855F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .empty-state {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 60px 20px; opacity: 0.3; text-transform: uppercase; letter-spacing: 0.2em;
+        }
+    </style>
+</head>
+<body class="p-6">
+
+    <header class="max-w-4xl mx-auto mb-12 flex justify-between items-center">
+        <div>
+            <h1 class="font-black text-3xl tracking-tighter">DATA CORE</h1>
+            <p class="text-[10px] font-bold text-cyan-400 tracking-widest uppercase">實體數據導通中心</p>
+        </div>
+        <div class="data-panel px-8 py-4 text-right">
+            <span class="text-[10px] font-black opacity-40 block uppercase">可用點數 (PTS)</span>
+            <span id="pts-balance" class="text-3xl font-black pts-glow">--</span>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto space-y-8">
+        <section class="data-panel p-8">
+            <div class="flex items-center gap-3 mb-6">
+                <i data-lucide="zap" class="text-cyan-400"></i>
+                <h2 class="font-black uppercase tracking-wider text-sm">原子化寫入測試</h2>
+            </div>
+            <div class="flex gap-4">
+                <input type="number" id="pts-amount" placeholder="輸入增減數值" class="flex-1 bg-black/40 p-4 rounded-2xl text-white font-bold">
+                <button onclick="adjustPoints()" class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition">執行實體交易</button>
+            </div>
+        </section>
+
+        <section class="data-panel p-8 min-h-[400px]">
+            <div class="flex items-center gap-3 mb-6">
+                <i data-lucide="database" class="text-purple-400"></i>
+                <h2 class="font-black uppercase tracking-wider text-sm"> artifacts/showin-ai/ 實時監聽</h2>
+            </div>
+            <div id="data-list" class="space-y-4">
+                <div class="empty-state">
+                    <i data-lucide="wifi-off" class="w-12 h-12 mb-4"></i>
+                    <p class="text-[10px] font-black">等待神經對位... 無實體數據</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, collection, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const app = initializeApp(JSON.parse(window.__firebase_config));
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        // 1. 身份對位與財務監聽
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // 實時監聽余額 - 實體寫入
+                onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+                    if (docSnap.exists()) {
+                        document.getElementById('pts-balance').innerText = docSnap.data().points || 0;
+                    }
+                });
+                
+                // 2. 實體數據清單監聽
+                const q = query(collection(db, 'artifacts', 'showin-ai', 'public', 'data', 'flows'), orderBy('createdAt', 'desc'), limit(10));
+                onSnapshot(q, (snapshot) => {
+                    const listEl = document.getElementById('data-list');
+                    if (snapshot.empty) return; // 保持空態
+                    
+                    listEl.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'p-4 bg-white/5 rounded-2xl flex justify-between items-center';
+                        item.innerHTML = `
+                            <div>
+                                <p class="text-xs font-bold opacity-80">${data.payload?.title || 'Untitled'}</p>
+                                <p class="text-[9px] opacity-40 font-mono">${doc.id}</p>
+                            </div>
+                            <div class="text-[10px] font-black text-cyan-400">SYNCED</div>
+                        `;
+                        listEl.appendChild(item);
+                    });
+                });
+            } else {
+                signInAnonymously(auth);
+            }
+        });
+
+        // 3. 原子化交易呼叫邏輯
+        window.adjustPoints = async () => {
+            const amount = parseInt(document.getElementById('pts-amount').value);
+            if (!amount) return alert("請輸入有效數值");
+            
+            try {
+                const token = await auth.currentUser.getIdToken();
+                const res = await fetch(`${window.API_BASE}/api/v1/admin/adjust-points`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ amount: amount })
+                });
+                if (res.ok) alert("✅ 實體交易完成");
+            } catch (e) {
+                console.error("交易失敗:", e);
+            }
+        };
+    </script>
+</body>
+</html>

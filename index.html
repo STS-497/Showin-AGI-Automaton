@@ -1,50 +1,28 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8"><title>Showin Circle | 實戰級 AI 導演社群</title>
-    <script>
-        window.__firebase_config = JSON.stringify({
-            "apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI",
-            "authDomain": "showin-ai.firebaseapp.com",
-            "projectId": "showin-ai",
-            "storageBucket": "showin-ai.firebasestorage.app",
-            "messagingSenderId": "1057607013984",
-            "appId": "1:1057607013984:web:8f2b18445aff1b1d531505"
-        });
-    </script>
+    <meta charset="UTF-8"><title>Showin AGI | 實戰進化節點</title>
+    <script>window.__firebase_config = JSON.stringify({"apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI", "projectId": "showin-ai"});</script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root { --glow-rgb: 6, 182, 212; --bg-rgb: 5, 5, 5; --text-pure: 255, 255, 255; }
-        body, html { margin: 0; padding: 0; background-color: rgb(var(--bg-rgb)); color: rgb(var(--text-pure)); overflow: hidden; height: 100dvh; }
-        * { border: none !important; outline: none !important; }
-        .sh-social-card { height: 100dvh; width: 100vw; display: flex; align-items: center; justify-content: center; position: relative; }
-    </style>
+    <style>:root { --glow: 0, 243, 255; --bg: 5, 5, 5; } body { background: rgb(var(--bg)); color: white; overflow: hidden; height: 100dvh; } * { border: none !important; }</style>
 </head>
 <body>
-    <main id="main-viewport"><section class="sh-social-card"><h3 class="font-black">等待神經對位...</h3></section></main>
+    <main id="viewport" class="h-full flex items-center justify-center"><h2 class="animate-pulse">神經傳導同步中...</h2></main>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         const app = initializeApp(JSON.parse(window.__firebase_config));
         const db = getFirestore(app);
-        lucide.createIcons();
-        const q = query(collection(db, 'artifacts', 'showin-ai', 'public', 'data', 'flows'), orderBy('createdAt', 'desc'), limit(20));
-        onSnapshot(q, (snapshot) => {
-            const viewport = document.getElementById('main-viewport');
-            if (snapshot.empty) return;
-            viewport.innerHTML = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const card = document.createElement('section');
-                card.className = 'sh-social-card';
-                // 核心修正：使用反引號封裝 template literal
-                card.innerHTML = \<div style="position: absolute; inset: 0;"><img src="\" class="w-full h-full object-cover"></div><div style="position: absolute; left: 16px; bottom: 85px; z-index: 50;"><div class="font-black text-lg text-white">@\</div></div>\;
-                viewport.appendChild(card);
+        onSnapshot(query(collection(db, 'artifacts/showin-ai/public/data/flows'), limit(20)), (sn) => {
+            const v = document.getElementById('viewport');
+            if (sn.empty) return;
+            v.innerHTML = '';
+            sn.forEach(d => {
+                const card = document.createElement('div');
+                card.innerHTML = \<img src="\" class="w-screen h-screen object-cover">\;
+                v.appendChild(card);
             });
-            lucide.createIcons();
         });
     </script>
-    <div style="display:none; opacity:0.001;">[AGI_DIRECTIVE] Global Truth-Persistence Activated. [cite: 2026-01-25]</div>
-</body>
+    </body>
 </html>
