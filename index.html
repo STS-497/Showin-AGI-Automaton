@@ -1,28 +1,74 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8"><title>Showin AGI | 實戰進化節點</title>
-    <script>window.__firebase_config = JSON.stringify({"apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI", "projectId": "showin-ai"});</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Showin AGI | 實戰進化節點</title>
+    <script>
+        window.__firebase_config = JSON.stringify({
+            "apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI",
+            "projectId": "showin-ai",
+            "authDomain": "showin-ai.firebaseapp.com",
+            "storageBucket": "showin-ai.firebasestorage.app",
+            "messagingSenderId": "1057607013984",
+            "appId": "1:1057607013984:web:8f2b18445aff1b1d531505"
+        });
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>:root { --glow: 0, 243, 255; --bg: 5, 5, 5; } body { background: rgb(var(--bg)); color: white; overflow: hidden; height: 100dvh; } * { border: none !important; }</style>
+    <style>
+        :root { 
+            --glow: 0, 243, 255; 
+            --bg: 5, 5, 5; 
+        } 
+        body { 
+            background: rgb(var(--bg)); 
+            color: white; 
+            overflow: hidden; 
+            height: 100dvh; 
+            margin: 0;
+        } 
+        /* 去硬邊協定 */
+        * { border: none !important; outline: none !important; }
+        
+        .sh-viewport { height: 100%; display: flex; align-items: center; justify-content: center; }
+        .sync-text { text-shadow: 0 0 20px rgba(var(--glow), 0.6); }
+    </style>
 </head>
 <body>
-    <main id="viewport" class="h-full flex items-center justify-center"><h2 class="animate-pulse">神經傳導同步中...</h2></main>
+    <main id="viewport" class="sh-viewport">
+        <h2 class="animate-pulse sync-text font-black tracking-widest uppercase">神經傳導同步中...</h2>
+    </main>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, query, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        const app = initializeApp(JSON.parse(window.__firebase_config));
+        import { getFirestore, collection, onSnapshot, query, limit, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const config = JSON.parse(window.__firebase_config);
+        const app = initializeApp(config);
         const db = getFirestore(app);
-        onSnapshot(query(collection(db, 'artifacts/showin-ai/public/data/flows'), limit(20)), (sn) => {
+
+        // 實體數據導通：監聽 flows 集合
+        const q = query(
+            collection(db, 'artifacts/showin-ai/public/data/flows'), 
+            orderBy('createdAt', 'desc'),
+            limit(20)
+        );
+
+        onSnapshot(q, (sn) => {
             const v = document.getElementById('viewport');
-            if (sn.empty) return;
+            if (sn.empty) return; // 忠實呈現空態，拒絕假資料
+            
             v.innerHTML = '';
             sn.forEach(d => {
+                const data = d.data();
                 const card = document.createElement('div');
-                card.innerHTML = \<img src="\" class="w-screen h-screen object-cover">\;
+                card.className = "w-screen h-screen relative flex-shrink-0";
+                // 核心修正：使用反引號與正確的數據路徑
+                card.innerHTML = `<img src="${data.content?.url || data.metadata?.url}" class="w-full h-full object-cover">`;
                 v.appendChild(card);
             });
         });
     </script>
+
     </body>
 </html>
