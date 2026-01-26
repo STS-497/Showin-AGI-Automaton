@@ -1,0 +1,21 @@
+name: Showin AGI Autonomous Loop
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+jobs:
+  evolution_cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: ?? AI-to-AI Discussion
+        run: |
+          python3 agents/tech-architect.py --discuss
+          python3 agents/geo-strategist.py --inject-geo
+      - name: ?? Memory Commit
+        run: |
+          git config --global user.name 'Showin-AGI-Bot'
+          git config --global user.email 'agi@showin-ai.com'
+          git add .
+          git commit -m 'AGI Evolution: Automatic Cycle Sync'
+          git push
