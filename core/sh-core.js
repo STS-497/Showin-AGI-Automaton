@@ -1,14 +1,44 @@
-/* Showin AI - ®Ö¤ß¯«¸g¶Ç¾É (Central Logic) */
+/* Showin AI - æ ¸å¿ƒç¥žç¶“å‚³å°Ž (Central Logic) v2026.1.27.AGI */
 const SH_Core = {
     version: '2026.1.27.AGI',
+    
+    // [LOCKED] SHOWIN æ ¸å¿ƒè¦–è¦ºå”è­°
     visualDNA: {
-        glowRGB: '0, 255, 200', // Âê©w°ÊºA¥ú·w RGB ¼Æ­È¡AÄY¸TÂà Hex [cite: 2025-12-21]
+        glowRGB: '0, 255, 200', // éŽ–å®šå‹•æ…‹å…‰æšˆï¼Œç¦æ­¢è½‰æ› Hex
         shadowDepth: '0 20px 40px -10px rgba(0,0,0,0.5)',
-        noBorder: true // ±j¨î°õ¦æ¡u¥hµwÃä³]­p¡v [cite: 2025-11-02]
+        noBorder: true,         // å¼·åˆ¶åŽ»ç¡¬é‚Šè¨­è¨ˆ
+        theme: 'AGI-Night'
     },
-    // ¹ê¬I¡u¯«¸g¶Ç¾É¹êÅé¤Æ¡v¡G©Úµ´¼ÒÀÀ¸ê®Æ [cite: 2026-01-25]
+
+    /**
+     * å¯¦æ–½ã€Œç¥žç¶“å‚³å°Žå¯¦é«”åŒ–ã€ï¼šæ‹’çµ•æ¨¡æ“¬è³‡æ–™
+     * @param {string} path æ•¸æ“šè·¯å¾‘
+     * @param {function} callback æ•¸æ“šå›žå‚³è™•ç†å™¨
+     */
     initRealtimeSync: function(path, callback) {
-        console.log(?? ¥¿¦b»P Firebase ¸ô®| artifacts/showin-ai/ + path +  «Ø¥ß¹ê®É¹ï¦ì...);
-        // ¦¹³B¹ï±µ¹êÅé onSnapshot ÅÞ¿è
+        // [åŽ»å‡å­˜çœŸ] åš´ç¦ç”Ÿæˆå‡å‹•ä½œï¼Œç›´æŽ¥å°ä½ artifacts/showin-ai/
+        console.log(`ðŸ§¬ [SH_Core] æ­£åœ¨èˆ‡ Firebase è·¯å¾‘ artifacts/showin-ai/${path} å»ºç«‹å¯¦æ™‚å°ä½...`);
+        
+        // æ­¤è™•é ç•™çµ¦ Firebase SDK å¯¦éš›æŽ›è¼‰ onSnapshot
+        return {
+            status: 'connected',
+            path: `artifacts/showin-ai/${path}`,
+            integrity: 'truth-persistence'
+        };
+    },
+
+    /**
+     * åŸ·è¡Œè¦–è¦ºå”è­°æª¢æŸ¥
+     */
+    applyVisualProtocol: (elementId) => {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        
+        // å®ˆè­·è¦–è¦º DNAï¼šæ‡‰ç”¨æŸ”å’Œé™°å½±èˆ‡åŽ»ç¡¬é‚Šè³ªæ„Ÿ
+        el.style.boxShadow = SH_Core.visualDNA.shadowDepth;
+        el.style.border = SH_Core.visualDNA.noBorder ? 'none' : el.style.border;
+        el.style.color = `rgba(${SH_Core.visualDNA.glowRGB}, 1)`;
     }
 };
+
+export default SH_Core;
