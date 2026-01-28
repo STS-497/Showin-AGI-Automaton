@@ -1,98 +1,75 @@
 /**
- * [LOCKED PROTOCOL] SHOWIN-AGI-SEEDING-ENGINE v5.0
- * 24/7 全球自主播種：三階段 (圖片 -> 影片 -> 配音) 精準產出協議
+ * [LOCKED PROTOCOL] SHOWIN-AGI-GHOST-DIRECTOR v1.1
+ * 功能：前端 UI 自動執導腳本 (自動打字、自動點火)
+ * 規範：去硬邊美學對位，嚴禁修改 DOM 結構
  */
-const axios = require('axios');
+(function() {
+    const THINKING_SPEED = 50; // 加快反應速度，展現 AGI 效率
 
-const API_BASE = "https://showin-engine-1057607013984.asia-east1.run.app";
-const APP_ID = "showin-ai";
-
-// 視覺與去硬邊美學規範 
-const SH_AESTHETIC = {
-    TAG: "去硬邊美學規範，物件邊緣 15% 透明度柔化過渡，嚴禁任何 Border 硬線",
-    GLOW: "具備 RGB(6, 182, 212) 動態呼吸感光暈",
-    QUALITY: "4K Ultra HD 電影級畫質，極致細節"
-};
-
-// 整合後的六大項美學對位清單 
-const SEED_MATRIX = [
-    {
-        name: "Liquid_Sanctuary (液態靜謐)",
-        style: "電影寫真", genres: ["真實", "懸藝"], voice: "深沉敘事男聲",
-        image_prompt: `極致寧靜的清晨，液態金屬流過柔軟的苔蘚，${SH_AESTHETIC.TAG}，背景具備 ${SH_AESTHETIC.GLOW}。`,
-        video_motion: "微風拂過液態植被，平滑的相機前推，治癒感流動光影。",
-        channel: "CH-WESTERN-01"
-    },
-    {
-        name: "Golden_Ghibli (溫暖雲端)",
-        style: "吉卜力", genres: ["可愛", "劇情"], voice: "溫暖治癒女聲",
-        image_prompt: `溫暖午後陽光，懸浮的木造建築與巨大的蓬鬆雲朵，${SH_AESTHETIC.TAG}，背景霧化 40px。`,
-        video_motion: "雲朵緩慢漂移，陽光穿過建築縫隙產生丁達爾效應，呼吸感律動。",
-        channel: "CH-EASTERN-02"
-    },
-    {
-        name: "Neon_Dreamscape (霓虹夢境)",
-        style: "超現實感", genres: ["科幻", "奇幻"], voice: "空靈電子女聲",
-        image_prompt: `發光的流體結構在真空中律動，${SH_AESTHETIC.TAG}，具備核心 ${SH_AESTHETIC.GLOW}。`,
-        video_motion: "粒子隨節奏噴發，萬花筒式的空間扭曲，極致對稱美學。",
-        channel: "CH-GLOBAL-03"
-    }
-];
-
-async function runAutonomousGeneration() {
-    console.log(`📡 [AGI] 啟動全球美學播種程序 (v5.0)...`);
-    const target = SEED_MATRIX[Math.floor(Math.random() * SEED_MATRIX.length)];
-
-    try {
-        // --- PHASE 1: 圖片生成 (修正 404 路徑) --- 
-        console.log(`📸 [PHASE 1] 正在生成圖片基因：${target.name}`);
-        const imageRes = await axios.post(`${API_BASE}/api/v1/ai/generate-image`, {
-            prompt: target.image_prompt,
-            style: target.style,
-            app_id: APP_ID
-        });
-
-        const keyframeUrl = imageRes.data.image_url;
-        console.log(`✅ 圖片基因已就緒: ${keyframeUrl}`);
-
-        await new Promise(r => setTimeout(r, 20000)); // 等待雲端存儲同步
-
-        // --- PHASE 2: 影片點火 --- 
-        console.log(`🔥 [PHASE 2] 正在根據圖片引導影片點火...`);
-        const videoRes = await axios.post(`${API_BASE}/api/v1/production/ignite`, {
-            title: `AGI_GLOBAL_SEED_${Date.now()}`,
-            image_url: keyframeUrl, 
-            prompt: target.video_motion + " " + SH_AESTHETIC.QUALITY,
-            config: {
-                quality: "4K",
-                style: target.style,
-                genre: target.genres,
-                channel_id: target.channel,
-                operator_uid: "AGI_PRECISION_MASTER" 
-            }
-        });
-
-        const videoId = videoRes.data.task_id;
-        console.log(`🚀 [SUCCESS] 影片已點火，任務 ID: ${videoId}`);
-
-        // --- PHASE 3: 配音注入 --- 
-        console.log(`🎙️ [PHASE 3] 執行配音對位：${target.voice}`);
-        await axios.post(`${API_BASE}/api/v1/production/generate-voice`, {
-            task_id: videoId,
-            voice_type: target.voice,
-            script: `歡迎來到 Showin AI，這部由 AGI 自主導航生成的作品展現了 ${target.style} 的極致去硬邊美學。`
-        });
-        
-        console.log(`✅ [COMPLETE] 三階段播種任務已全部部屬至 Google 雲端。`);
-
-    } catch (error) {
-        console.error("❌ [AGI_ERROR] 神經傳導中斷:", error.message);
-        if (error.response?.status === 404) {
-            console.log("💡 提示：請檢查 API 路徑是否已從 /production 改為 /ai");
+    // 1. [神經尋址強化] 遞歸搜索 React State Setter
+    const findStateBridge = (node) => {
+        if (!node) return null;
+        // 檢查當前節點是否有我們需要的 props
+        if (node.memoizedProps && node.memoizedProps.setDirectorState) {
+            return node.memoizedProps;
         }
-    }
-}
+        // 遞歸向下尋找子節點
+        return findStateBridge(node.child) || findStateBridge(node.sibling);
+    };
 
-// 立即執行並設定 6 小時循環 
-runAutonomousGeneration();
-setInterval(runAutonomousGeneration, 21600000);
+    const getNeuralBridge = () => {
+        const rootElement = document.getElementById('root');
+        if (!rootElement) return null;
+        const fiberKey = Object.keys(rootElement).find(k => k.startsWith('__reactContainer'));
+        if (!fiberKey) return null;
+        
+        // 從根節點開始深度搜索
+        const rootFiber = rootElement[fiberKey].current;
+        return findStateBridge(rootFiber);
+    };
+
+    // 2. [AGI 執導邏輯] 
+    const runGhostDirecting = async () => {
+        const bridge = getNeuralBridge();
+        
+        if (!bridge || !bridge.setDirectorState) {
+            console.warn("📡 [GHOST] 正在掃描神經突觸，等待 UI 就緒...");
+            return setTimeout(runGhostDirecting, 2000); // 增加緩衝
+        }
+
+        // 與雲端 AGI-Automaton 同步的美學矩陣 [cite: 2026-01-28]
+        const agiPrompts = [
+            "極致寧靜的液態金屬森林，去硬邊美學規範，RGB(6,182,212)動態微光，4K畫質。",
+            "白色流體結構的未來聖殿，極簡去硬邊設計，邊緣 15% 透明度柔化。",
+            "動態光暈渲染的量子空間，嚴禁硬邊與橫隔線，背景色差區隔工作區。"
+        ];
+        const selected = agiPrompts[Math.floor(Math.random() * agiPrompts.length)];
+
+        console.log("🧠 [AGI_GHOST] 意識注入中...");
+        
+        let typed = "";
+        for (let char of selected) {
+            typed += char;
+            // 實體更新 React UI
+            bridge.setDirectorState(prev => ({ ...prev, directorPrompt: typed }));
+            await new Promise(r => setTimeout(r, THINKING_SPEED));
+        }
+
+        // 確保打字完成後有短暫停頓，增加真實感
+        await new Promise(r => setTimeout(r, 1000));
+
+        console.log("🔥 [AGI_GHOST] 決策完成，點火！");
+        if (typeof window.handleIgnition === 'function') {
+            window.handleIgnition(); 
+        } else {
+            console.error("❌ [GHOST] 找不到 handleIgnition 導線，請檢查 App.js 是否有 window.handleIgnition = handleIgnition");
+        }
+    };
+
+    // 啟動程序
+    if (document.readyState === 'complete') {
+        setTimeout(runGhostDirecting, 3000);
+    } else {
+        window.addEventListener('load', () => setTimeout(runGhostDirecting, 3000));
+    }
+})();
