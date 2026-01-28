@@ -1,0 +1,23 @@
+{
+  "name": "showin-agi-automaton",
+  "version": "1.0.0",
+  "description": "",
+  "main": "agi-director.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/STS-497/Showin-AGI-Automaton.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/STS-497/Showin-AGI-Automaton/issues"
+  },
+  "homepage": "https://github.com/STS-497/Showin-AGI-Automaton#readme",
+  "dependencies": {
+    "axios": "^1.13.4"
+  }
+}
