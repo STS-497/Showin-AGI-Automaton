@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Showin AGI | Data Core 數據核心</title>
+    <title>Showin AGI | Data Core 神經數據指揮部</title>
+    
     <script>
         window.__firebase_config = JSON.stringify({
             "apiKey": "AIzaSyAwfdLiAhsHK6kprzwGIiEoOZydVw14FeI",
@@ -15,93 +16,110 @@
         });
         window.API_BASE = "https://showin-engine-1057607013984.asia-east1.run.app";
     </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        @property --sh-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
         :root {
-            /* 視覺 DNA 變數 - 嚴禁轉換為 Hex */
-            --primary-glow: 0, 243, 255; 
+            --glow-rgb: 6, 182, 212; 
             --accent-purple: 168, 85, 247;
             --bg-deep: 5, 5, 5;
             --panel-soft: 20, 20, 20;
             --text-pure: 255, 255, 255;
-            --sh-soft-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            --sh-soft-shadow: 0 10px 60px rgba(0, 0, 0, 0.8);
         }
 
-        body {
-            background-color: rgb(var(--bg-deep));
-            color: rgb(var(--text-pure));
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* 去硬邊協定：禁止 border-bottom */
+        body { background-color: rgb(var(--bg-deep)); color: rgb(var(--text-pure)); font-family: 'Inter', sans-serif; overflow-x: hidden; }
         * { border: none !important; outline: none !important; }
 
         .data-panel {
-            background: rgba(var(--panel-soft), 0.8);
-            backdrop-filter: blur(20px);
+            background: rgba(var(--panel-soft), 0.6);
+            backdrop-filter: blur(40px);
             border-radius: 32px;
-            box-shadow: var(--sh-soft-shadow);
-            transition: transform 0.3s ease;
+            box-shadow: var(--sh-soft-shadow), inset 0 0 0 1px rgba(255,255,255,0.05);
         }
 
         .pts-glow {
-            text-shadow: 0 0 20px rgba(var(--primary-glow), 0.5);
+            text-shadow: 0 0 20px rgba(var(--glow-rgb), 0.6);
             background: linear-gradient(90deg, #00F6FF, #A855F7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
+        /* 呼吸感 AGI 指示燈 */
+        .status-pulse { animation: status-glow 3s infinite ease-in-out; }
+        @keyframes status-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(var(--glow-rgb), 0.2); opacity: 0.5; }
+            50% { box-shadow: 0 0 25px rgba(var(--glow-rgb), 0.8); opacity: 1; }
+        }
+
         .empty-state {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 60px 20px; opacity: 0.3; text-transform: uppercase; letter-spacing: 0.2em;
+            padding: 80px 20px; opacity: 0.2; text-transform: uppercase; letter-spacing: 0.3em;
         }
     </style>
 </head>
-<body class="p-6">
+<body class="p-8">
 
-    <header class="max-w-4xl mx-auto mb-12 flex justify-between items-center">
+    <header class="max-w-5xl mx-auto mb-16 flex justify-between items-end">
         <div>
-            <h1 class="font-black text-3xl tracking-tighter">DATA CORE</h1>
-            <p class="text-[10px] font-bold text-cyan-400 tracking-widest uppercase">實體數據導通中心</p>
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-2 h-2 rounded-full bg-cyan-400 status-pulse"></div>
+                <span class="text-[10px] font-black text-cyan-400 tracking-[0.4em] uppercase">Neural Data Core v5.0</span>
+            </div>
+            <h1 class="font-black text-5xl tracking-tighter italic">數據核心</h1>
         </div>
-        <div class="data-panel px-8 py-4 text-right">
-            <span class="text-[10px] font-black opacity-40 block uppercase">可用點數 (PTS)</span>
-            <span id="pts-balance" class="text-3xl font-black pts-glow">--</span>
+        <div class="data-panel px-10 py-6 text-right">
+            <span class="text-[10px] font-black opacity-30 block uppercase tracking-widest mb-1">可用實體點數 (PTS)</span>
+            <span id="pts-balance" class="text-4xl font-black pts-glow tracking-tighter">--</span>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto space-y-8">
-        <section class="data-panel p-8">
-            <div class="flex items-center gap-3 mb-6">
-                <i data-lucide="zap" class="text-cyan-400"></i>
-                <h2 class="font-black uppercase tracking-wider text-sm">原子化寫入測試</h2>
-            </div>
-            <div class="flex gap-4">
-                <input type="number" id="pts-amount" placeholder="輸入增減數值" class="flex-1 bg-black/40 p-4 rounded-2xl text-white font-bold">
-                <button onclick="adjustPoints()" class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition">執行實體交易</button>
-            </div>
-        </section>
-
-        <section class="data-panel p-8 min-h-[400px]">
-            <div class="flex items-center gap-3 mb-6">
-                <i data-lucide="database" class="text-purple-400"></i>
-                <h2 class="font-black uppercase tracking-wider text-sm"> artifacts/showin-ai/ 實時監聽</h2>
-            </div>
-            <div id="data-list" class="space-y-4">
-                <div class="empty-state">
-                    <i data-lucide="wifi-off" class="w-12 h-12 mb-4"></i>
-                    <p class="text-[10px] font-black">等待神經對位... 無實體數據</p>
+    <main class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-4 space-y-8">
+            <section class="data-panel p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <i data-lucide="zap" class="text-cyan-400 w-5 h-5"></i>
+                    <h2 class="font-black uppercase tracking-widest text-xs">原子化寫入測試</h2>
                 </div>
+                <div class="space-y-4">
+                    <input type="number" id="pts-amount" placeholder="輸入增減數值" class="w-full bg-black/40 p-5 rounded-2xl text-white font-bold text-lg focus:ring-1 ring-cyan-500/50">
+                    <button onclick="adjustPoints()" class="w-full py-5 bg-gradient-to-r from-cyan-500/20 to-purple-600/20 text-cyan-400 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:from-cyan-500/40 transition-all active:scale-95 shadow-xl">執行實體交易</button>
+                </div>
+            </section>
+
+            <div class="data-panel p-8">
+                <p class="text-[9px] font-bold text-gray-500 leading-relaxed uppercase tracking-widest">
+                    本中心所有操作均會觸發 Firebase 實時監聽與 API 身分驗證。嚴禁任何 Mock Data 注入。
+                </p>
             </div>
-        </section>
+        </div>
+
+        <div class="lg:col-span-8">
+            <section class="data-panel p-10 min-h-[600px]">
+                <div class="flex items-center justify-between mb-10">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="brain-circuit" class="text-purple-400 w-5 h-5"></i>
+                        <h2 class="font-black uppercase tracking-widest text-xs">AGI 自主生產日誌</h2>
+                    </div>
+                    <span class="text-[9px] font-black text-gray-600 tracking-widest uppercase">Live Firestore: artifacts/showin-ai/</span>
+                </div>
+                
+                <div id="data-list" class="space-y-6">
+                    <div class="empty-state">
+                        <i data-lucide="activity" class="w-12 h-12 mb-6"></i>
+                        <p class="text-[10px] font-black">等待 AGI 點火... 無活動數據</p>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, collection, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, collection, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const app = initializeApp(JSON.parse(window.__firebase_config));
         const auth = getAuth(app);
@@ -111,32 +129,56 @@
         // 1. 身份對位與財務監聽
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // 實時監聽余額 - 實體寫入
+                // 實時監聽餘額
                 onSnapshot(doc(db, "users", user.uid), (docSnap) => {
                     if (docSnap.exists()) {
-                        document.getElementById('pts-balance').innerText = docSnap.data().points || 0;
+                        const pts = docSnap.data().points || 0;
+                        document.getElementById('pts-balance').innerText = pts.toLocaleString();
+                        localStorage.setItem('showin_user_pts', pts); // 同步至緩存
                     }
                 });
                 
-                // 2. 實體數據清單監聽
-                const q = query(collection(db, 'artifacts', 'showin-ai', 'public', 'data', 'flows'), orderBy('createdAt', 'desc'), limit(10));
+                // 2. 實體生產日誌監聽 (改為監聽 productions 集合)
+                const q = query(
+                    collection(db, 'artifacts', 'showin-ai', 'public', 'data', 'productions'), 
+                    orderBy('created_at', 'desc'), 
+                    limit(12)
+                );
+
                 onSnapshot(q, (snapshot) => {
                     const listEl = document.getElementById('data-list');
-                    if (snapshot.empty) return; // 保持空態
+                    if (snapshot.empty) return; 
                     
                     listEl.innerHTML = '';
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
+                    snapshot.forEach(docSnap => {
+                        const data = docSnap.data();
                         const item = document.createElement('div');
-                        item.className = 'p-4 bg-white/5 rounded-2xl flex justify-between items-center';
+                        item.className = 'p-6 bg-white/5 rounded-[24px] flex justify-between items-center group hover:bg-white/[0.08] transition-all';
+                        
+                        // 狀態色塊定義
+                        const statusColor = data.status === 'completed' ? 'text-green-400' : 'text-cyan-400';
+                        const statusText = data.operator_uid === 'AGI_FULL_MASTER' ? 'AGI_AUTONOMOUS' : 'USER_DIRECTED';
+
                         item.innerHTML = `
-                            <div>
-                                <p class="text-xs font-bold opacity-80">${data.payload?.title || 'Untitled'}</p>
-                                <p class="text-[9px] opacity-40 font-mono">${doc.id}</p>
+                            <div class="flex items-center gap-5">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                                    <i data-lucide="${data.status === 'completed' ? 'check-circle' : 'loader-2'}" class="w-4 h-4 ${data.status === 'completed' ? 'text-green-500' : 'animate-spin text-cyan-500'}"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-black tracking-tight opacity-90 mb-1">${data.title || 'Untitled Operation'}</p>
+                                    <div class="flex gap-3">
+                                        <p class="text-[8px] opacity-30 font-mono tracking-tighter">${docSnap.id}</p>
+                                        <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">${statusText}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-[10px] font-black text-cyan-400">SYNCED</div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-black ${statusColor} tracking-widest uppercase mb-1">${data.status || 'PENDING'}</p>
+                                <p class="text-[8px] font-mono opacity-20">${new Date(data.created_at?.seconds * 1000).toLocaleTimeString()}</p>
+                            </div>
                         `;
                         listEl.appendChild(item);
+                        lucide.createIcons();
                     });
                 });
             } else {
@@ -156,7 +198,7 @@
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ amount: amount })
                 });
-                if (res.ok) alert("✅ 實體交易完成");
+                if (res.ok) alert("✅ 實體交易完成，帳本已更新");
             } catch (e) {
                 console.error("交易失敗:", e);
             }
